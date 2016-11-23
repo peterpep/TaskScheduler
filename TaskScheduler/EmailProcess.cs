@@ -14,7 +14,6 @@ namespace TaskScheduler
     {
         private MailMessage mail;
         private SmtpClient client;
-        //private string SendTo = "peterpep@umich.edu";
         
 
         public EmailProcess(string emailFrom, string passwordFrom, string SendTo)
