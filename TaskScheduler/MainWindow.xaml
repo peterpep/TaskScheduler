@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TaskScheduler"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="525"
+        Title="Task Scheduler" Height="450" Width="525"
         Closed="MainWindow_OnClosed"
         ResizeMode="NoResize"
         >

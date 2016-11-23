@@ -26,6 +26,7 @@ namespace TaskScheduler
         public NewTaskPage()
         {
             InitializeComponent();
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
         }
 
         public string TaskName
@@ -61,12 +62,12 @@ namespace TaskScheduler
                 catch (Exception ex)
                 {
                     
-                    MessageBox.Show(ex.Message);
+                    MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             else
             {
-                MessageBox.Show("Please enter required data");
+                MessageBox.Show("Please enter required data", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 

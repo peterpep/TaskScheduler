@@ -160,6 +160,10 @@ namespace TaskScheduler
             newTaskItem.Frequency = newTask.Frequency;
             listOfTasks.AddToTasks(newTaskItem);
             taskList.Items.Refresh();
+
+
+            taskList.Items.MoveCurrentToLast();
+            taskList.SelectedItem = taskList.Items.CurrentItem;
         }
 
         private void RemoveTask_Click(object sender, RoutedEventArgs e)
@@ -186,7 +190,7 @@ namespace TaskScheduler
             catch (Exception ex)
             {
                 
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             
         }
@@ -213,12 +217,13 @@ namespace TaskScheduler
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void MainWindow_OnClosed(object sender, EventArgs e)
         {
+            SerializeTask(listOfTasks, taskData);
             GC.Collect();
             Environment.Exit(0);
         }
@@ -236,7 +241,7 @@ namespace TaskScheduler
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -253,7 +258,7 @@ namespace TaskScheduler
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -300,7 +305,7 @@ namespace TaskScheduler
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
     }
