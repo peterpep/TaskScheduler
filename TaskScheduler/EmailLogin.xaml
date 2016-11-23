@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:TaskScheduler"
         mc:Ignorable="d"
         Title="Email Login" Height="210.488" Width="253.902"
-        ResizeMode="NoResize">
+        ResizeMode="NoResize" Icon="Resources/notepad2.ico">
     <Grid>
         <Label x:Name="usernameLbl" Content="User Name: " Height="25" Width="75" Margin="20,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"></Label>
         <TextBox x:Name="UsernameTxt" Height="25" Width="129" Margin="90,10,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"/>

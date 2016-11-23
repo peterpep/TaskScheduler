@@ -23,7 +23,7 @@ namespace TaskScheduler
             {
                 if (task.TaskName == taskToAdd.TaskName)
                 {
-                    MessageBox.Show("This item already exists");
+                    MessageBox.Show("This item already exists", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                     return;
                 }
             }

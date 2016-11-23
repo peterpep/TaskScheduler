@@ -5,8 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:TaskScheduler"
         mc:Ignorable="d"
-        Title="NewTaskPage" Height="185.977" Width="318.819"
-        ResizeMode="NoResize">
+        Title="New Task" Height="185.977" Width="318.819"
+        ResizeMode="NoResize" Icon="Resources/notepad2.ico">
     <Grid>
         <Label x:Name="newTask" Content="Enter the new Task: " Margin="5,0,0,0"></Label>
         <TextBox x:Name="newTaskName" Width="175" HorizontalAlignment="Right" TextWrapping="WrapWithOverflow" Height="20" VerticalAlignment="Top" Margin="0,5,5,0"></TextBox>

@@ -42,7 +42,9 @@
         <Label x:Name="ListofTasks" FontWeight="Heavy" Content="Task List" Margin="32,70,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"></Label>
         <Label x:Name="TaskInfo" FontWeight="Heavy" Content="Task Info" Margin="270,70,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"></Label>
         <DockPanel MinHeight="325" Margin="0,90,0.4,-0.4">
-            <ListBox x:Name="TaskList" MinWidth="100" Height="300" BorderBrush="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,10,10" BorderThickness="2" SelectionMode="Single" SelectionChanged="TaskList_OnSelectionChanged"></ListBox>
+            <ListBox x:Name="TaskList" MinWidth="100" Height="300" BorderBrush="Black" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,0,10,10" BorderThickness="2" SelectionMode="Single" SelectionChanged="TaskList_OnSelectionChanged">
+                
+            </ListBox>
             <TextBox x:Name="TextInfo" BorderBrush="Black" SelectionOpacity="0.4" Text="Enter Task Description" AcceptsReturn="True" MinWidth="380" MinHeight="100"  VerticalAlignment="Top"  Margin="0,0,10,0" IsEnabled="False" BorderThickness="2" Height="300"></TextBox>
         </DockPanel>
     </Grid>

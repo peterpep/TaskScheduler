@@ -83,10 +83,10 @@ namespace TaskScheduler
             TaskList.Items.Refresh();
             DeserializeTasks(_taskData);
 
-            if (_taskData.Count() > 0) // if tasks were loaded, auto select first time
-            {
-                TaskList.SelectedIndex = 0;
-            }
+            //if (_taskData.Count() > 0) // if tasks were loaded, auto select first time
+            //{
+            //    TaskList.SelectedIndex = 0;
+            //}
             //MessageBox.Show(System.IO.Path.GetDirectoryName(
             //    System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase));
         }
@@ -394,7 +394,7 @@ namespace TaskScheduler
             catch (Exception ex)
             {
 
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                MessageBox.Show("There are no tasks to delete", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
