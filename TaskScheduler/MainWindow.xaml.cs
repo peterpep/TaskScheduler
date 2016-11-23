@@ -31,7 +31,7 @@ namespace TaskScheduler
     /// </summary>
     public partial class MainWindow : Window
     {
-        #region variables and constants
+        #region variables, constants, fields
         private const double Interval60Minutes = 60 * 60 * 1000; // ms in hour
         private readonly Timer _checkTime = new Timer(Interval60Minutes);
         private EmailProcess _emailer;
@@ -47,6 +47,7 @@ namespace TaskScheduler
         private readonly NotifyIcon _notifyIcon = new NotifyIcon();
         #endregion
 
+        #region Window and UI
         public MainWindow()
         {
             InitializeComponent();
@@ -91,7 +92,61 @@ namespace TaskScheduler
             //    System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase));
         }
 
-        #region NotifyIcon Handlers
+        private void MainWindow_OnClosed(object sender, EventArgs e)
+        {
+            SerializeTask(_listOfTasks, _taskData);
+            GC.Collect();
+            Environment.Exit(0);
+        }
+
+        private void TaskList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (_listOfTasks.Count != 0)
+            {
+                TextInfo.IsEnabled = true;
+                TextInfo.Text = _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description;
+            }
+            else
+            {
+                TextInfo.Text = "";
+            }
+
+        }
+
+        private void EmailLogin_OnClick(object sender, RoutedEventArgs e)
+        {
+            _newEmailPerson = new EmailLogin(_newEmailer);
+
+            _newEmailPerson.ShowDialog();
+
+            if (!string.IsNullOrEmpty(_newEmailPerson.EmailUser))
+            {
+
+            }
+
+            try
+            {
+                _newEmailer = new PersonEmail(_newEmailPerson.EmailUser, _newEmailPerson.EmailPass)
+                {
+                    SendingTo = _newEmailPerson.SendToEmail
+                };
+
+                if (_newEmailPerson.WillSerialize)
+                {
+                    SerializeTask(_newEmailer, _emailInfo);
+                }
+
+                _emailer = new EmailProcess(_newEmailer.EmailAddress, _newEmailer.Password, _newEmailer.SendingTo);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Email information was not entered", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+        }
+        #endregion
+
+        #region Handlers
         private void Window_Resize(object sender, EventArgs e)
         {
             if (this.WindowState != WindowState.Minimized) return;
@@ -107,7 +162,6 @@ namespace TaskScheduler
             _notifyIcon.Visible = false;
             this.ShowInTaskbar = true;
         }
-        #endregion
 
         private void checkTime_Elapsed(object sender, ElapsedEventArgs e)
         {
@@ -157,36 +211,9 @@ namespace TaskScheduler
 
         }
 
-        private bool IsTimeReady(DateTime timerunning)
-        {
-            if (DateTime.Now.CompareTo(timerunning) > 0)
-            {
-                return true;
-            }
-            return false;
-        }
+        #endregion
 
-        private void TaskList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (_listOfTasks.Count != 0)
-            {
-                TextInfo.IsEnabled = true;
-                TextInfo.Text = _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description;
-            }
-            else
-            {
-                TextInfo.Text = "";
-            }
-            
-        }
-
-        private void MainWindow_OnClosed(object sender, EventArgs e)
-        {
-            SerializeTask(_listOfTasks, _taskData);
-            GC.Collect();
-            Environment.Exit(0);
-        }
-
+        #region (De)Serializing
         private static void SerializeTask(TasksView listOfTasksSerialize, string fileName)
         {
             try
@@ -267,38 +294,7 @@ namespace TaskScheduler
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
-
-        private void EmailLogin_OnClick(object sender, RoutedEventArgs e)
-        {
-            _newEmailPerson = new EmailLogin(_newEmailer);
-
-            _newEmailPerson.ShowDialog();
-
-            if (!string.IsNullOrEmpty(_newEmailPerson.EmailUser))
-            {
-                
-            }
-
-            try
-            {
-                _newEmailer = new PersonEmail(_newEmailPerson.EmailUser, _newEmailPerson.EmailPass)
-                {
-                    SendingTo = _newEmailPerson.SendToEmail
-                };
-
-                if (_newEmailPerson.WillSerialize)
-                {
-                    SerializeTask(_newEmailer, _emailInfo);
-                }
-
-                _emailer = new EmailProcess(_newEmailer.EmailAddress, _newEmailer.Password, _newEmailer.SendingTo);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Email information was not entered", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
-            
-        }
+        #endregion
 
         #region Commands
         private void OpenCommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
