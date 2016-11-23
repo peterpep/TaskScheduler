@@ -9,20 +9,29 @@
         Closed="MainWindow_OnClosed"
         ResizeMode="CanMinimize" Icon="Resources/notepad2.ico"
         Background="MediumSeaGreen">
- 
+    <Window.CommandBindings>
+        <CommandBinding Command="Open" Executed="OpenCommandBinding_OnExecuted"></CommandBinding>
+        <CommandBinding Command="Save" Executed="SaveCommandBinding_OnExecuted"></CommandBinding>
+    </Window.CommandBindings>
+    <Window.InputBindings>
+        <KeyBinding Key="O" Modifiers="Control" Command="Open"></KeyBinding>
+        <KeyBinding Key="S" Modifiers="Control" Command="Save"></KeyBinding>
+    </Window.InputBindings>
     <Grid>
         <Menu Height="25" BorderThickness="0 1 0 1" BorderBrush="Gray" VerticalAlignment="Top" Background="Black">
             <MenuItem Header="_File" Height="25" Foreground="White">
                 <MenuItem Header="_Email Login" Click="EmailLogin_OnClick" Background="Black" BorderThickness="0,0,0,0" BorderBrush="Black"></MenuItem>
                 <Separator Foreground="White"></Separator>
                 <MenuItem Header="_Send Email" Click="MenuItem_OnClick" Background="Black" BorderThickness="0,0,0,0"></MenuItem>
+                <Separator Foreground="White"></Separator>
+                <MenuItem Header="_Edit Task" Background="Black" Command="Open"></MenuItem>
             </MenuItem>
         </Menu>
         <Button x:Name="SerializeButton" Height="25" Width="75" Content="Save Tasks" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,45,0,0" Click="SerializeButton_OnClick"></Button>
         <Button x:Name="Send" Content="Send" Height="25" Width="75" VerticalAlignment="Top" HorizontalAlignment="Left" Click="Send_Click" Margin="425,45,0,0"></Button>
         <Button x:Name="AddTask" Content="Add Task" Height="25" Width="75" Margin="95,45,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Click="AddTask_Click"></Button>
         <Button x:Name="RemoveTask" Content="Delete Task" Height="25" Width="100" Margin="180,45,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Click="RemoveTask_Click"></Button>
-        <Button x:Name="SaveText" Content="Save Task Description" Height="25" Width ="125" Margin="290,45,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" Click="SaveText_Click"></Button>
+        <Button x:Name="SaveText" Content="Save Task Description" Height="25" Width ="125" Margin="290,45,0,0" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="Ctrl+S to Save" Command="Save"></Button>
         <Label x:Name="ListofTasks" FontWeight="Heavy" Content="Task List" Margin="32,70,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"></Label>
         <Label x:Name="TaskInfo" FontWeight="Heavy" Content="Task Info" Margin="270,70,0,0" VerticalAlignment="Top" HorizontalAlignment="Left"></Label>
         <DockPanel MinHeight="325" Margin="0,90,0.4,-0.4">

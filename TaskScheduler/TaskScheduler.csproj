@@ -61,6 +61,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="EditingTask.xaml.cs">
+      <DependentUpon>EditingTask.xaml</DependentUpon>
+    </Compile>
     <Compile Include="EmailLogin.xaml.cs">
       <DependentUpon>EmailLogin.xaml</DependentUpon>
     </Compile>
@@ -75,6 +78,10 @@
     </Compile>
     <Compile Include="TaskObj.cs" />
     <Compile Include="TasksView.cs" />
+    <Page Include="EditingTask.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="EmailLogin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

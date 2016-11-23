@@ -82,6 +82,11 @@ namespace TaskScheduler
             TaskList.ItemsSource = _listOfTasks;
             TaskList.Items.Refresh();
             DeserializeTasks(_taskData);
+
+            if (_taskData.Count() > 0) // if tasks were loaded, auto select first time
+            {
+                TaskList.SelectedIndex = 0;
+            }
             //MessageBox.Show(System.IO.Path.GetDirectoryName(
             //    System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase));
         }
@@ -391,6 +396,45 @@ namespace TaskScheduler
                 MessageBox.Show("Email information was not entered", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             
+        }
+
+        
+        private void OpenCommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            try
+            {
+                EditingTask newEdit = new EditingTask(_listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)]);
+                newEdit.ShowDialog();
+
+                if (newEdit.IsCanceled == false)
+                {
+                    _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].TaskName = newEdit._taskToEdit.TaskName;
+                    _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description = newEdit._taskToEdit.Description;
+                    _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Frequency = newEdit._taskToEdit.Frequency;
+                    TaskList.ItemsSource = _listOfTasks;
+                    TextInfo.Text = _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description;
+                    TaskList.Items.Refresh();
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
+            
+        }
+
+        private void SaveCommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            try
+            {
+                _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description = TextInfo.Text;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

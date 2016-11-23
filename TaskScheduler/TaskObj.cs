@@ -7,41 +7,41 @@ using System.Threading.Tasks;
 namespace TaskScheduler
 {
     [Serializable()]
-    class TaskObj
+    public class TaskObj
     {
-        private string taskName;
-        private string description;
-        private DateTime remainderSendAt;
-        private int frequency;
+        private string _taskName;
+        private string _description;
+        private DateTime _remainderSendAt;
+        private int _frequency;
 
-        public TaskObj(string Name)
+        public TaskObj(string name)
         {
-            TaskName = Name;
+            TaskName = name;
             Description = "";
         }
 
         public string TaskName
         {
-            get { return taskName; }
-            private set { taskName = value; }
+            get { return _taskName; }
+            set { _taskName = value; }
         }
 
         public string Description
         {
-            get { return description; }
-            set { description = value; }
+            get { return _description; }
+            set { _description = value; }
         }
 
         public DateTime RemainderSendAt
         {
-            get { return remainderSendAt; }
-            set { remainderSendAt = value; }
+            get { return _remainderSendAt; }
+            set { _remainderSendAt = value; }
         }
 
         public int Frequency
         {
-            get { return frequency; }
-            set { frequency = value; }
+            get { return _frequency; }
+            set { _frequency = value; }
         }
 
         public override string ToString()
