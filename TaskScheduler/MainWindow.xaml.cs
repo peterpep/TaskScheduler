@@ -166,73 +166,8 @@ namespace TaskScheduler
             return false;
         }
 
-        private void Send_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var testsub = "ToDo: " + _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].TaskName;
-                var testMessage = _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description;
-
-                _emailer.SendMail(testsub, testMessage);
-
-                MessageBox.Show("COMPLETED!");
-            }
-            catch (Exception ex)
-            {
-                
-                MessageBox.Show(ex.Message);
-            }
-            
-        }
-
         private void AddTask_Click(object sender, RoutedEventArgs e)
         {
-            _newTask = new NewTaskPage();
-
-            _newTask.ShowDialog();
-
-            TaskObj newTaskItem = new TaskObj(_newTask.TaskName)
-            {
-                RemainderSendAt = _newTask.Remind,
-                Frequency = _newTask.Frequency
-            };
-
-            _listOfTasks.AddToTasks(newTaskItem);
-            TaskList.Items.Refresh();
-
-
-            TaskList.Items.MoveCurrentToLast();
-            TaskList.SelectedItem = TaskList.Items.CurrentItem;
-
-            TextInfo.Focus();
-        }
-
-        private void RemoveTask_Click(object sender, RoutedEventArgs e)
-        {
-            
-            try
-            {
-                var temp = TaskList.Items.IndexOf(TaskList.SelectedItem);
-                var newIndex = temp;
-                if (temp == 0)
-                {
-                    newIndex++;
-                }
-                else
-                {
-                    newIndex--;
-                }
-
-                TaskList.SelectedIndex = newIndex;
-                _listOfTasks.RemoveAt(temp);
-                TaskList.ItemsSource = _listOfTasks;
-                TaskList.Items.Refresh();
-            }
-            catch (Exception ex)
-            {
-                
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
             
         }
 
@@ -398,7 +333,7 @@ namespace TaskScheduler
             
         }
 
-        
+        #region Commands
         private void OpenCommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             try
@@ -421,7 +356,6 @@ namespace TaskScheduler
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
             
         }
 
@@ -436,5 +370,75 @@ namespace TaskScheduler
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
+
+        private void DeleteCommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            try
+            {
+                var temp = TaskList.Items.IndexOf(TaskList.SelectedItem);
+                var newIndex = temp;
+                if (temp == 0)
+                {
+                    newIndex++;
+                }
+                else
+                {
+                    newIndex--;
+                }
+
+                TaskList.SelectedIndex = newIndex;
+                _listOfTasks.RemoveAt(temp);
+                TaskList.ItemsSource = _listOfTasks;
+                TaskList.Items.Refresh();
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void SendCommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            try
+            {
+                var testsub = "ToDo: " + _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].TaskName;
+                var testMessage = _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description;
+
+                _emailer.SendMail(testsub, testMessage);
+
+                MessageBox.Show("COMPLETED!");
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void AddNewTaskCommandBinding_OnExecuted(object sender, ExecutedRoutedEventArgs e)
+        {
+            _newTask = new NewTaskPage();
+
+            _newTask.ShowDialog();
+
+            TaskObj newTaskItem = new TaskObj(_newTask.TaskName)
+            {
+                RemainderSendAt = _newTask.Remind,
+                Frequency = _newTask.Frequency
+            };
+
+            _listOfTasks.AddToTasks(newTaskItem);
+            TaskList.Items.Refresh();
+
+
+            TaskList.Items.MoveCurrentToLast();
+            TaskList.SelectedItem = TaskList.Items.CurrentItem;
+
+            TextInfo.Focus();
+        }
+
+        #endregion
+
     }
 }

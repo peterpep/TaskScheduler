@@ -61,6 +61,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="CustomCommands.cs" />
     <Compile Include="EditingTask.xaml.cs">
       <DependentUpon>EditingTask.xaml</DependentUpon>
     </Compile>
