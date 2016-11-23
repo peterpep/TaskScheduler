@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace TaskScheduler
 {
     [Serializable()]
-    class PersonEmail
+    public class PersonEmail
     {
 
         private string emailAddress;

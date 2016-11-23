@@ -33,6 +33,19 @@ namespace TaskScheduler
 
         }
 
+        public EmailLogin(PersonEmail savedEmail)
+        {
+            InitializeComponent();
+            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+
+            //load user info
+            UsernameTxt.Text = savedEmail.EmailAddress;
+            PasswordTxt.Password = savedEmail.Password;
+            SendToTxt.Text = savedEmail.SendingTo;
+
+            SaveLoginInfo.IsChecked = true;
+        }
+
         public string EmailUser
         {
             get { return emailUser; }
@@ -64,7 +77,7 @@ namespace TaskScheduler
             {
                 
                 EmailUser = UsernameTxt.Text;
-                EmailPass = PasswordTxt.Text;
+                EmailPass = PasswordTxt.Password;
                 SendToEmail = SendToTxt.Text;
                 if (emailUser.Contains("@") && sendToEmail.Contains("@"))
                 {

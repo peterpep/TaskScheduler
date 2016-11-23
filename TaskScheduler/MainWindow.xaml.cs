@@ -39,7 +39,7 @@ namespace TaskScheduler
         private bool _emailSentToday = false;
         private DateTime _defaultEmailTime;
         private NewTaskPage _newTask = new NewTaskPage();
-        private readonly EmailLogin _newEmailPerson = new EmailLogin();
+        private EmailLogin _newEmailPerson = new EmailLogin();
         private PersonEmail _newEmailer;
         private bool _isEmailSaved = false;
         private readonly string _emailInfo = "EmailInfo.bin";
@@ -166,11 +166,6 @@ namespace TaskScheduler
             return false;
         }
 
-        private void AddTask_Click(object sender, RoutedEventArgs e)
-        {
-            
-        }
-
         private void TaskList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (_listOfTasks.Count != 0)
@@ -183,18 +178,6 @@ namespace TaskScheduler
                 TextInfo.Text = "";
             }
             
-        }
-
-        private void SaveText_Click(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description = TextInfo.Text;
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            }
         }
 
         private void MainWindow_OnClosed(object sender, EventArgs e)
@@ -285,26 +268,10 @@ namespace TaskScheduler
             }
         }
 
-        private void MenuItem_OnClick(object sender, RoutedEventArgs e)
-        {
-            try
-            {
-                var testsub = "ToDo: " + _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].TaskName;
-                var testMessage = _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description;
-
-                _emailer.SendMail(testsub, testMessage);
-
-                MessageBox.Show("COMPLETED!", "Email Sent Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
-            }
-            catch (Exception ex)
-            {
-
-                MessageBox.Show(ex.Message);
-            }
-        }
-
         private void EmailLogin_OnClick(object sender, RoutedEventArgs e)
         {
+            _newEmailPerson = new EmailLogin(_newEmailer);
+
             _newEmailPerson.ShowDialog();
 
             if (!string.IsNullOrEmpty(_newEmailPerson.EmailUser))
@@ -402,12 +369,13 @@ namespace TaskScheduler
         {
             try
             {
+
                 var testsub = "ToDo: " + _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].TaskName;
                 var testMessage = _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description;
 
                 _emailer.SendMail(testsub, testMessage);
 
-                MessageBox.Show("COMPLETED!");
+                MessageBox.Show("COMPLETED!", "Email Sent Succesfully", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
