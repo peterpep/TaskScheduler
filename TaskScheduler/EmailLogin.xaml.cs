@@ -62,10 +62,18 @@ namespace TaskScheduler
         {
             try
             {
+                
                 EmailUser = UsernameTxt.Text;
                 EmailPass = PasswordTxt.Text;
                 SendToEmail = SendToTxt.Text;
-                Close();
+                if (emailUser.Contains("@") && sendToEmail.Contains("@"))
+                {
+                    Close();
+                }
+                else
+                {
+                    MessageBox.Show("Please enter valid email addresses.");
+                }
             }
             catch (Exception ex)
             {
