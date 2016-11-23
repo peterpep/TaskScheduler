@@ -16,9 +16,9 @@ namespace TaskScheduler
         private SmtpClient client;
         
 
-        public EmailProcess(string emailFrom, string passwordFrom, string SendTo)
+        public EmailProcess(string emailFrom, string passwordFrom, string sendTo)
         {
-            mail = new MailMessage(emailFrom, SendTo);
+            mail = new MailMessage(emailFrom, sendTo);
             client = new SmtpClient();
             client.Port = 587;
             client.DeliveryMethod = SmtpDeliveryMethod.Network;
@@ -30,10 +30,10 @@ namespace TaskScheduler
             
         }
 
-        public void SendMail(string Subject, string Message)
+        public void SendMail(string subject, string message)
         {
-            mail.Subject = Subject;
-            mail.Body = Message;
+            mail.Subject = subject;
+            mail.Body = message;
             mail.BodyEncoding = Encoding.UTF8;
             mail.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
             client.Send(mail);

@@ -34,7 +34,7 @@ namespace TaskScheduler
         #region variables and constants
         private const double Interval60Minutes = 60 * 60 * 1000; // ms in hour
         private readonly Timer _checkTime = new Timer(Interval60Minutes);
-        private readonly EmailProcess _emailer;
+        private EmailProcess _emailer;
         private TasksView _listOfTasks;
         private bool _emailSentToday = false;
         private DateTime _defaultEmailTime;
@@ -79,8 +79,8 @@ namespace TaskScheduler
             _checkTime.Enabled = true;
             _emailer = new EmailProcess(_newEmailer.EmailAddress, _newEmailer.Password, _newEmailer.SendingTo);
             _listOfTasks = new TasksView();
-            taskList.ItemsSource = _listOfTasks;
-            taskList.Items.Refresh();
+            TaskList.ItemsSource = _listOfTasks;
+            TaskList.Items.Refresh();
             DeserializeTasks(_taskData);
             //MessageBox.Show(System.IO.Path.GetDirectoryName(
             //    System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase));
@@ -165,8 +165,8 @@ namespace TaskScheduler
         {
             try
             {
-                var testsub = "ToDo: " + _listOfTasks[taskList.Items.IndexOf(taskList.SelectedItem)].TaskName;
-                var testMessage = _listOfTasks[taskList.Items.IndexOf(taskList.SelectedItem)].Description;
+                var testsub = "ToDo: " + _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].TaskName;
+                var testMessage = _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description;
 
                 _emailer.SendMail(testsub, testMessage);
 
@@ -193,11 +193,13 @@ namespace TaskScheduler
             };
 
             _listOfTasks.AddToTasks(newTaskItem);
-            taskList.Items.Refresh();
+            TaskList.Items.Refresh();
 
 
-            taskList.Items.MoveCurrentToLast();
-            taskList.SelectedItem = taskList.Items.CurrentItem;
+            TaskList.Items.MoveCurrentToLast();
+            TaskList.SelectedItem = TaskList.Items.CurrentItem;
+
+            TextInfo.Focus();
         }
 
         private void RemoveTask_Click(object sender, RoutedEventArgs e)
@@ -205,7 +207,7 @@ namespace TaskScheduler
             
             try
             {
-                var temp = taskList.Items.IndexOf(taskList.SelectedItem);
+                var temp = TaskList.Items.IndexOf(TaskList.SelectedItem);
                 var newIndex = temp;
                 if (temp == 0)
                 {
@@ -216,10 +218,10 @@ namespace TaskScheduler
                     newIndex--;
                 }
 
-                taskList.SelectedIndex = newIndex;
+                TaskList.SelectedIndex = newIndex;
                 _listOfTasks.RemoveAt(temp);
-                taskList.ItemsSource = _listOfTasks;
-                taskList.Items.Refresh();
+                TaskList.ItemsSource = _listOfTasks;
+                TaskList.Items.Refresh();
             }
             catch (Exception ex)
             {
@@ -233,12 +235,12 @@ namespace TaskScheduler
         {
             if (_listOfTasks.Count != 0)
             {
-                textInfo.IsEnabled = true;
-                textInfo.Text = _listOfTasks[taskList.Items.IndexOf(taskList.SelectedItem)].Description;
+                TextInfo.IsEnabled = true;
+                TextInfo.Text = _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description;
             }
             else
             {
-                textInfo.Text = "";
+                TextInfo.Text = "";
             }
             
         }
@@ -247,7 +249,7 @@ namespace TaskScheduler
         {
             try
             {
-                _listOfTasks[taskList.Items.IndexOf(taskList.SelectedItem)].Description = textInfo.Text;
+                _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description = TextInfo.Text;
             }
             catch (Exception ex)
             {
@@ -331,8 +333,8 @@ namespace TaskScheduler
                     {
                         BinaryFormatter bin = new BinaryFormatter();
                         _listOfTasks = (TasksView)bin.Deserialize(stream);
-                        taskList.ItemsSource = _listOfTasks;
-                        taskList.Items.Refresh();
+                        TaskList.ItemsSource = _listOfTasks;
+                        TaskList.Items.Refresh();
                     }
                 }
                 
@@ -341,6 +343,54 @@ namespace TaskScheduler
             {
                 MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
+        }
+
+        private void MenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var testsub = "ToDo: " + _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].TaskName;
+                var testMessage = _listOfTasks[TaskList.Items.IndexOf(TaskList.SelectedItem)].Description;
+
+                _emailer.SendMail(testsub, testMessage);
+
+                MessageBox.Show("COMPLETED!", "Email Sent Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        private void EmailLogin_OnClick(object sender, RoutedEventArgs e)
+        {
+            _newEmailPerson.ShowDialog();
+
+            if (!string.IsNullOrEmpty(_newEmailPerson.EmailUser))
+            {
+                
+            }
+
+            try
+            {
+                _newEmailer = new PersonEmail(_newEmailPerson.EmailUser, _newEmailPerson.EmailPass)
+                {
+                    SendingTo = _newEmailPerson.SendToEmail
+                };
+
+                if (_newEmailPerson.WillSerialize)
+                {
+                    SerializeTask(_newEmailer, _emailInfo);
+                }
+
+                _emailer = new EmailProcess(_newEmailer.EmailAddress, _newEmailer.Password, _newEmailer.SendingTo);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Email information was not entered", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+            
         }
     }
 }
