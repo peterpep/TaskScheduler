@@ -1,7 +1,6 @@
 # TaskScheduler
-Start of Project
+
+
+Task scheduler is an application created to remind you of any tasks/activities you wish to do. As such it comes with a built in feature to send out emails at a frequency you set.
 
 For email, if using gmail, enable less secure apps (or just make a throwaway account).
-
-MainWindow - Send is manually send an email of the selected task in the listbox
-           - Save is to serialize the current set of tasks
