@@ -72,7 +72,7 @@ namespace TaskScheduler
                 }
                 else
                 {
-                    MessageBox.Show("Please enter valid email addresses.");
+                    MessageBox.Show("Please enter valid email addresses", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
                 }
             }
             catch (Exception ex)

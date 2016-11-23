@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Resources;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading;
@@ -11,12 +13,16 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using MessageBox = System.Windows.MessageBox;
 using Timer = System.Timers.Timer;
+using MouseEventHandler = System.Windows.Forms.MouseEventHandler;
+using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
 
 namespace TaskScheduler
 {
@@ -26,62 +32,87 @@ namespace TaskScheduler
     public partial class MainWindow : Window
     {
         #region variables and constants
-        const double interval60Minutes = 60 * 60 * 1000; // ms in hour
-        Timer checkTime = new Timer(interval60Minutes);
-        private EmailProcess emailer;
-        private TasksView listOfTasks;
-        private bool emailSentToday = false;
-        private DateTime defaultEmailTime;
-        private NewTaskPage newTask = new NewTaskPage();
-        private EmailLogin newEmailPerson = new EmailLogin();
-        private PersonEmail newEmailer;
-        private bool isEmailSaved = false;
-        private string emailInfo = "EmailInfo.bin";
-        private string taskData = "TasksData.bin";
+        private const double Interval60Minutes = 60 * 60 * 1000; // ms in hour
+        private readonly Timer _checkTime = new Timer(Interval60Minutes);
+        private readonly EmailProcess _emailer;
+        private TasksView _listOfTasks;
+        private bool _emailSentToday = false;
+        private DateTime _defaultEmailTime;
+        private NewTaskPage _newTask = new NewTaskPage();
+        private readonly EmailLogin _newEmailPerson = new EmailLogin();
+        private PersonEmail _newEmailer;
+        private bool _isEmailSaved = false;
+        private readonly string _emailInfo = "EmailInfo.bin";
+        private readonly string _taskData = "TasksData.bin";
+        private readonly NotifyIcon _notifyIcon = new NotifyIcon();
         #endregion
 
         public MainWindow()
         {
             InitializeComponent();
 
-            DeserializeEmail(emailInfo);
+            _notifyIcon.Icon = new Icon(Resource.notepad2, 40, 40);
+            this.StateChanged += new EventHandler(Window_Resize);
+            _notifyIcon.MouseDoubleClick += new MouseEventHandler(Window_Unminimize);
 
-            if (isEmailSaved == false)
+            DeserializeEmail(_emailInfo); //check if saved email login exists
+
+            //with no saved login, prompt user
+            if (_isEmailSaved == false)
             {
-                newEmailPerson.ShowDialog();
+                _newEmailPerson.ShowDialog();
 
-                newEmailer = new PersonEmail(newEmailPerson.EmailUser, newEmailPerson.EmailPass);
-                newEmailer.SendingTo = newEmailPerson.SendToEmail;
-
-                if (newEmailPerson.WillSerialize == true)
+                _newEmailer = new PersonEmail(_newEmailPerson.EmailUser, _newEmailPerson.EmailPass)
                 {
-                    SerializeTask(newEmailer, emailInfo);
+                    SendingTo = _newEmailPerson.SendToEmail
+                };
+
+                if (_newEmailPerson.WillSerialize)
+                {
+                    SerializeTask(_newEmailer, _emailInfo);
                 }
             }
 
-            WindowStartupLocation = System.Windows.WindowStartupLocation.CenterScreen;
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-            checkTime.Elapsed += new ElapsedEventHandler(checkTime_Elapsed);
-            checkTime.Enabled = true;
-            emailer = new EmailProcess(newEmailer.EmailAddress, newEmailer.Password, newEmailer.SendingTo);
-            listOfTasks = new TasksView();
-            taskList.ItemsSource = listOfTasks;
+            _checkTime.Elapsed += checkTime_Elapsed;
+            _checkTime.Enabled = true;
+            _emailer = new EmailProcess(_newEmailer.EmailAddress, _newEmailer.Password, _newEmailer.SendingTo);
+            _listOfTasks = new TasksView();
+            taskList.ItemsSource = _listOfTasks;
             taskList.Items.Refresh();
-            DeserializeTasks(taskData);
+            DeserializeTasks(_taskData);
             //MessageBox.Show(System.IO.Path.GetDirectoryName(
             //    System.Reflection.Assembly.GetExecutingAssembly().GetName().CodeBase));
         }
 
+        #region NotifyIcon Handlers
+        private void Window_Resize(object sender, EventArgs e)
+        {
+            if (this.WindowState != WindowState.Minimized) return;
+            _notifyIcon.Visible = true;
+            this.ShowInTaskbar = false;
+            this.Hide();
+        }
+
+        private void Window_Unminimize(object sender, MouseEventArgs e)
+        {
+            this.Show();
+            this.WindowState = WindowState.Normal;
+            _notifyIcon.Visible = false;
+            this.ShowInTaskbar = true;
+        }
+        #endregion
 
         private void checkTime_Elapsed(object sender, ElapsedEventArgs e)
         {
             var timeNow = DateTime.Now;
 
-            foreach (var emails in listOfTasks)
+            foreach (var emails in _listOfTasks)
             {
                 if (timeNow.CompareTo(emails.RemainderSendAt) > 0)
                 {
-                    emailer.SendMail(emails.TaskName, emails.Description);
+                    _emailer.SendMail(emails.TaskName, emails.Description);
                     emails.RemainderSendAt = emails.RemainderSendAt.AddDays(emails.Frequency);
                 }
 
@@ -121,7 +152,7 @@ namespace TaskScheduler
 
         }
 
-        private bool isTimeReady(DateTime timerunning)
+        private bool IsTimeReady(DateTime timerunning)
         {
             if (DateTime.Now.CompareTo(timerunning) > 0)
             {
@@ -134,10 +165,10 @@ namespace TaskScheduler
         {
             try
             {
-                var testsub = "ToDo: " + listOfTasks[taskList.Items.IndexOf(taskList.SelectedItem)].TaskName;
-                var testMessage = listOfTasks[taskList.Items.IndexOf(taskList.SelectedItem)].Description;
+                var testsub = "ToDo: " + _listOfTasks[taskList.Items.IndexOf(taskList.SelectedItem)].TaskName;
+                var testMessage = _listOfTasks[taskList.Items.IndexOf(taskList.SelectedItem)].Description;
 
-                emailer.SendMail(testsub, testMessage);
+                _emailer.SendMail(testsub, testMessage);
 
                 MessageBox.Show("COMPLETED!");
             }
@@ -151,14 +182,17 @@ namespace TaskScheduler
 
         private void AddTask_Click(object sender, RoutedEventArgs e)
         {
-            newTask = new NewTaskPage();
+            _newTask = new NewTaskPage();
 
-            newTask.ShowDialog();
-            
-            TaskObj newTaskItem = new TaskObj(newTask.TaskName);
-            newTaskItem.RemainderSendAt = newTask.Remind;
-            newTaskItem.Frequency = newTask.Frequency;
-            listOfTasks.AddToTasks(newTaskItem);
+            _newTask.ShowDialog();
+
+            TaskObj newTaskItem = new TaskObj(_newTask.TaskName)
+            {
+                RemainderSendAt = _newTask.Remind,
+                Frequency = _newTask.Frequency
+            };
+
+            _listOfTasks.AddToTasks(newTaskItem);
             taskList.Items.Refresh();
 
 
@@ -172,7 +206,7 @@ namespace TaskScheduler
             try
             {
                 var temp = taskList.Items.IndexOf(taskList.SelectedItem);
-                int newIndex = temp;
+                var newIndex = temp;
                 if (temp == 0)
                 {
                     newIndex++;
@@ -183,8 +217,8 @@ namespace TaskScheduler
                 }
 
                 taskList.SelectedIndex = newIndex;
-                listOfTasks.RemoveAt(temp);
-                taskList.ItemsSource = listOfTasks;
+                _listOfTasks.RemoveAt(temp);
+                taskList.ItemsSource = _listOfTasks;
                 taskList.Items.Refresh();
             }
             catch (Exception ex)
@@ -197,10 +231,10 @@ namespace TaskScheduler
 
         private void TaskList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (listOfTasks.Count != 0)
+            if (_listOfTasks.Count != 0)
             {
                 textInfo.IsEnabled = true;
-                textInfo.Text = listOfTasks[taskList.Items.IndexOf(taskList.SelectedItem)].Description;
+                textInfo.Text = _listOfTasks[taskList.Items.IndexOf(taskList.SelectedItem)].Description;
             }
             else
             {
@@ -213,7 +247,7 @@ namespace TaskScheduler
         {
             try
             {
-                listOfTasks[taskList.Items.IndexOf(taskList.SelectedItem)].Description = textInfo.Text;
+                _listOfTasks[taskList.Items.IndexOf(taskList.SelectedItem)].Description = textInfo.Text;
             }
             catch (Exception ex)
             {
@@ -223,16 +257,16 @@ namespace TaskScheduler
 
         private void MainWindow_OnClosed(object sender, EventArgs e)
         {
-            SerializeTask(listOfTasks, taskData);
+            SerializeTask(_listOfTasks, _taskData);
             GC.Collect();
             Environment.Exit(0);
         }
 
-        private static void SerializeTask(TasksView listOfTasksSerialize, string FileName)
+        private static void SerializeTask(TasksView listOfTasksSerialize, string fileName)
         {
             try
             {
-                using (Stream stream = File.Open(FileName, FileMode.Create))
+                using (Stream stream = File.Open(fileName, FileMode.Create))
                 {
                     BinaryFormatter bin = new BinaryFormatter();
                     bin.Serialize(stream, listOfTasksSerialize);
@@ -245,11 +279,11 @@ namespace TaskScheduler
             }
         }
 
-        private static void SerializeTask(PersonEmail savedEmail, string FileName)
+        private static void SerializeTask(PersonEmail savedEmail, string fileName)
         {
             try
             {
-                using (Stream stream = File.Open(FileName, FileMode.Create))
+                using (Stream stream = File.Open(fileName, FileMode.Create))
                 {
                     BinaryFormatter bin = new BinaryFormatter();
                     bin.Serialize(stream, savedEmail);
@@ -262,42 +296,42 @@ namespace TaskScheduler
             }
         }
 
-        private void DeserializeEmail(string FileName)
+        private void DeserializeEmail(string fileName)
         {
             try
             {
                 
-                using (Stream stream = File.Open(FileName, FileMode.Open))
+                using (Stream stream = File.Open(fileName, FileMode.Open))
                 {
                     BinaryFormatter bin = new BinaryFormatter();
-                    newEmailer = (PersonEmail) bin.Deserialize(stream);
+                    _newEmailer = (PersonEmail) bin.Deserialize(stream);
                 }
 
-                isEmailSaved = true;
+                _isEmailSaved = true;
 
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                isEmailSaved = false;
+                _isEmailSaved = false;
             }
         }
 
         private void SerializeButton_OnClick(object sender, RoutedEventArgs e)
         {
-            SerializeTask(listOfTasks, taskData);
+            SerializeTask(_listOfTasks, _taskData);
         }
 
-        private void DeserializeTasks(string FileName)
+        private void DeserializeTasks(string fileName)
         {
             try
             {
-                if (File.Exists(FileName) == true)
+                if (File.Exists(fileName))
                 {
-                    using (Stream stream = File.Open(FileName, FileMode.Open))
+                    using (Stream stream = File.Open(fileName, FileMode.Open))
                     {
                         BinaryFormatter bin = new BinaryFormatter();
-                        listOfTasks = (TasksView)bin.Deserialize(stream);
-                        taskList.ItemsSource = listOfTasks;
+                        _listOfTasks = (TasksView)bin.Deserialize(stream);
+                        taskList.ItemsSource = _listOfTasks;
                         taskList.Items.Refresh();
                     }
                 }

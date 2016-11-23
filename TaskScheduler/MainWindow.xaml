@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Task Scheduler" Height="450" Width="525"
         Closed="MainWindow_OnClosed"
-        ResizeMode="NoResize"
+        ResizeMode="CanMinimize" Icon="Resources/notepad2.ico"
         >
     <Grid>
         <Button x:Name="SerializeButton" Height="25" Width="75" Content="Save Tasks" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="10,45,0,0" Click="SerializeButton_OnClick"></Button>
