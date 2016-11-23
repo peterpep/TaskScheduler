@@ -1,0 +1,20 @@
+﻿<Window x:Class="TaskScheduler.NewTaskPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:TaskScheduler"
+        mc:Ignorable="d"
+        Title="NewTaskPage" Height="185.977" Width="318.819"
+        ResizeMode="NoResize">
+    <Grid>
+        <Label x:Name="newTask" Content="Enter the new Task: " Margin="5,0,0,0"></Label>
+        <TextBox x:Name="newTaskName" Width="175" HorizontalAlignment="Right" TextWrapping="WrapWithOverflow" Height="20" VerticalAlignment="Top" Margin="0,5,5,0"></TextBox>
+        <Label x:Name="newDate" Content="Enter Reminder Date: " Margin="5,35,0,0"></Label>
+        <TextBox x:Name="remindDate" Width="175" HorizontalAlignment="Right" TextWrapping="WrapWithOverflow" Height="20" VerticalAlignment="Top" Margin="0,38,5,0"></TextBox>
+        <Label x:Name="freqLabel" Content="Enter Frequency: " Margin="5,70,0,0"></Label>
+        <TextBox x:Name="frequencyInput" Width="175" HorizontalAlignment="Right" TextWrapping="WrapWithOverflow" Height="20" VerticalAlignment="Top" Margin="0,76,5,0"></TextBox>
+        <Button x:Name="Confirm" Content="Confirm" Height="25" Width="50" VerticalAlignment="Top" Margin="-75,115,0,0" Click="Confirm_Click" RenderTransformOrigin="0.504,0.5"></Button>
+        <Button x:Name="Cancel" Content="Cancel" Height="25" Width="50" VerticalAlignment="Top" Margin="75,115,0,0" Click="Cancel_Click"></Button>
+    </Grid>
+</Window>
